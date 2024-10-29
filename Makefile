@@ -3,6 +3,7 @@
 
 GO=go
 GIT=git
+RM=rm
 
 all: pre-commit
 
@@ -17,7 +18,7 @@ push: # Pushes the changes to the repository.
 doc: # Serves the documentation locally.
 	$(GO) run golang.org/x/tools/cmd/godoc@latest -http=localhost:1967
 
-tidy: # Updates the go.mod file to use the latest versions of all direct and indirect dependencies.
+tidy: # Updates the go.mod and go.sum files.
 	$(GO) mod tidy
 
 fmt: # Formats Go source files in this repository.
@@ -33,10 +34,10 @@ test: # Runs unit tests.
 	$(GO) test -cover -race -vet all -mod readonly ./...
 
 test/coverage: # Generates a coverage profile and open it in a browser.
-	$(GO) test -coverprofile cover.out ./...
+	$(GO) test -coverprofile cover.out -race -vet all -mod readonly ./...
 	$(GO) tool cover -html=cover.out
 
-clean: # Cleans cache files from tests and deletes any build output.
-	$(GO) clean -cache -fuzzcache -testcache
+clean: # Cleans cache files from tests.
+	$(RM) -f cover.out
 
 .PHONY: all pre-commit commit push doc tidy fmt lint vulnerabilities test test/coverage clean
