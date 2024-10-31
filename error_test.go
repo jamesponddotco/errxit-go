@@ -65,3 +65,42 @@ func TestError_New(t *testing.T) {
 		})
 	}
 }
+
+func TestError_Unwrap(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name      string
+		giveError error
+		giveCode  int
+		wantErr   error
+	}{
+		{
+			name:      "With underlying error",
+			giveError: errGeneric,
+			giveCode:  1,
+			wantErr:   errGeneric,
+		},
+		{
+			name:      "With nil underlying error",
+			giveError: nil,
+			giveCode:  2,
+			wantErr:   nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var (
+				err       = errxit.New(tt.giveError, tt.giveCode)
+				unwrapped = err.Unwrap()
+			)
+
+			if !errors.Is(unwrapped, tt.wantErr) {
+				t.Fatalf("Unwrap() = %v, want %v", unwrapped, tt.wantErr)
+			}
+		})
+	}
+}

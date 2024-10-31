@@ -34,3 +34,8 @@ func (e *Error) Error() string {
 func (e *Error) Code() int {
 	return e.No
 }
+
+// Unwrap returns the underlying error.
+func (e *Error) Unwrap() error {
+	return e.Err
+}
